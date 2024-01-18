@@ -1,0 +1,1 @@
+## Folder used for AWS API Gateway for development ##
