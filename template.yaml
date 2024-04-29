@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+# Description of the application
+Description: |
+  University Syllabus API
+
+# Creating application resources
+Resources:
+
+  # BELOW ARE EXAMPLE LAMBDA FUNCTIONS - DO NOT EDIT, ONLY USE AS REFERENCE!
+  # Example Lambda 1 - HelloNameFunction
+  HelloNameFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/hello-name/scripts/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Timeout: 10
+      Events:
+        HelloName:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: post
+
+  # Example Lambda 2 - ByeNameFunction
+  ByeNameFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/bye-name/scripts/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Timeout: 10
+      Events:
+        HelloName:
+          Type: Api
+          Properties:
+            Path: /bye
+            Method: post
