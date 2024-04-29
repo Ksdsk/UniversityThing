@@ -1,1 +1,10 @@
+# Environment Variables / Secrets
 .env
+
+# AWS stuff
+.aws-sam
+samconfig.toml
+
+# Python stuff
+.pytest*
+__pycache__
