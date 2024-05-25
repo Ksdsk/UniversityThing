@@ -5,8 +5,63 @@ Transform: AWS::Serverless-2016-10-31
 Description: |
   University Syllabus API
 
+Parameters:
+  RdsSecurityGroupId:
+    Type: String
+    NoEcho: true
+  RdsSubnetId1:
+    Type: String
+    NoEcho: true
+  RdsSubnetId2:
+    Type: String
+    NoEcho: true
+  RdsHostname:
+    Type: String
+    NoEcho: true
+  RdsPort:
+    Type: String
+    Default: '3306'
+    NoEcho: true
+  RdsDbName:
+    Type: String
+    NoEcho: true
+  RdsSecretName:
+    Type: String
+    NoEcho: true
+
 # Creating application resources
 Resources:
+
+  ResetDBFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/reset-db/scripts/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Timeout: 120
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref RdsSecurityGroupId
+        SubnetIds:
+          - !Ref RdsSubnetId1
+          - !Ref RdsSubnetId2
+      Environment:
+        Variables:
+          RDS_HOSTNAME: !Ref RdsHostname
+          RDS_PORT: !Ref RdsPort
+          RDS_DB_NAME: !Ref RdsDbName
+          RDS_SECRET_NAME: !Ref RdsSecretName
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: '*'
+      Events:
+        HelloName:
+          Type: Api
+          Properties:
+            Path: /reset-db
+            Method: post
+            Auth:
+              ApiKeyRequired: true
 
   # BELOW ARE EXAMPLE LAMBDA FUNCTIONS - DO NOT EDIT, ONLY USE AS REFERENCE!
   # Example Lambda 1 - HelloNameFunction
