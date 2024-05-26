@@ -2,6 +2,9 @@
 .env
 env.json
 
+# DB Stuff
+**/databases/
+
 # AWS stuff
 .aws-sam
 samconfig.toml
