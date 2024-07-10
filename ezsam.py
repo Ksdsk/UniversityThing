@@ -49,7 +49,7 @@ def local_test(profile_name):
     if profile_name is None:
         profile_name = input("Enter profile name: ")
 
-    f = open(".env", "r")
+    f = open("local.env", "r")
     pairs = []
 
     for line in f:

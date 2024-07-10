@@ -6,6 +6,8 @@ Description: |
   University Syllabus API
 
 Parameters:
+
+  # AWS RDS
   RdsSecurityGroupId:
     Type: String
     NoEcho: true
@@ -25,8 +27,15 @@ Parameters:
   RdsDbName:
     Type: String
     NoEcho: true
-  RdsSecretName:
+  RdsUsername:
     Type: String
+    NoEcho: true
+  RdsPassword:
+    Type: String
+    NoEcho: true
+  RdsRegion:
+    Type: String
+    Default: us-east-1
     NoEcho: true
 
 # Creating application resources
@@ -49,8 +58,10 @@ Resources:
         Variables:
           RDS_HOSTNAME: !Ref RdsHostname
           RDS_PORT: !Ref RdsPort
+          RDS_USERNAME: !Ref RdsUsername
+          RDS_PASSWORD: !Ref RdsPassword
           RDS_DB_NAME: !Ref RdsDbName
-          RDS_SECRET_NAME: !Ref RdsSecretName
+          RDS_REGION: !Ref RdsRegion
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: '*'

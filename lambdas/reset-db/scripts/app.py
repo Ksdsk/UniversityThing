@@ -2,28 +2,32 @@ import json
 import boto3
 import os
 import mysql.connector
-from botocore.exceptions import ClientError
 
-def get_db_creds(session, secret_name, region_name):
-    
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
-    )
+def get_db_connector(db_hostname, db_port, db_region, db_username, db_password, db_name):
 
     try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
+        print(f"Attempting to connect to DB at {db_hostname}:{db_port} with user {db_username}")
+
+        connection = mysql.connector.connect(
+            host=db_hostname,
+            user=db_username,
+            password=db_password,
+            port=db_port
         )
-    except ClientError as e:
-        print(e)
-        raise Exception(e)
+
+        print("DB Connection Successful")
+        return connection
     
-    creds = json.loads(get_secret_value_response["SecretString"])
-    return creds["username"], creds["password"]
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+        raise
+
+    except Exception as e:
+        print(f"Exception: {e}")
+        raise
 
 def lambda_handler(event, context):
-    
+
     try:
         if not event:
             raise AttributeError("No event")
@@ -31,15 +35,14 @@ def lambda_handler(event, context):
         if 'body' not in event or not event['body']:
             raise AttributeError("Missing event body")
 
-        # Set up DB information
-        session = boto3.session.Session()
-
-        db_username, db_password = get_db_creds(session, os.environ["RDS_SECRET_NAME"], "us-east-1")
-        db_hostname = os.environ["RDS_HOSTNAME"]
-        db_port = int(os.environ["RDS_PORT"])
-        db_name = os.environ["RDS_DB_NAME"]
-
-        connection = mysql.connector.connect(host=db_hostname, user=db_username, password=db_password, port=db_port)
+        connection = get_db_connector(
+            os.environ["RDS_HOSTNAME"], 
+            os.environ["RDS_PORT"], 
+            os.environ["RDS_REGION"],
+            os.environ["RDS_USERNAME"],
+            os.environ["RDS_PASSWORD"],
+            os.environ["RDS_DB_NAME"]
+        )
         cursor = connection.cursor()
 
         with open("databases/model.sql", "r") as sql_file:
@@ -66,7 +69,6 @@ def lambda_handler(event, context):
         cursor.execute("SELECT * FROM school")
         result = cursor.fetchall()
         connection.close()
-        
 
         body = {
             "message": f"DB successfully created and reset to default.",
