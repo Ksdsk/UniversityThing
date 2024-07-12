@@ -1,5 +1,10 @@
 # Environment Variables / Secrets
 .env
+local.env
+env.json
+
+# DB Stuff
+**/databases/*
 
 # AWS stuff
 .aws-sam
