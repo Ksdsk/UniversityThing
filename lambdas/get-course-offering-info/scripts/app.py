@@ -82,6 +82,7 @@ def lambda_handler(event, context):
             cursor.execute(query)
             result_campus = cursor.fetchone()
             body["campus_name"] = result_campus["campus_name"]
+            body["campus_id"] = result["campus_id"]
 
         if result["instructor_id"] is not None:
             query = f"SELECT instructor_name, instructor_rmp_link FROM instructor WHERE instructor_id = \"{result['instructor_id']}\""
@@ -89,6 +90,7 @@ def lambda_handler(event, context):
             result_instructor = cursor.fetchone()
             body["instructor_name"] = result_instructor["instructor_name"]
             body["instructor_rmp_link"] = result_instructor["instructor_rmp_link"]
+            body["instructor_id"] = result["instructor_id"]
 
         connection.close()
 
