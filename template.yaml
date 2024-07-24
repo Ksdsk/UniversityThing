@@ -62,17 +62,45 @@ Resources:
           RDS_PASSWORD: !Ref RdsPassword
           RDS_DB_NAME: !Ref RdsDbName
           RDS_REGION: !Ref RdsRegion
-      Policies:
-        - AWSSecretsManagerGetSecretValuePolicy:
-            SecretArn: '*'
       Events:
-        HelloName:
+        ResetDB:
           Type: Api
           Properties:
             Path: /reset-db
             Method: post
             Auth:
               ApiKeyRequired: true
+
+  GetCourseOfferingInfoFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+        CodeUri: lambdas/get-course-offering-info/scripts/
+        Handler: app.lambda_handler
+        Runtime: python3.12
+        Timeout: 120
+        VpcConfig:
+          SecurityGroupIds:
+            - !Ref RdsSecurityGroupId
+          SubnetIds:
+            - !Ref RdsSubnetId1
+            - !Ref RdsSubnetId2
+        Environment:
+          Variables:
+            RDS_HOSTNAME: !Ref RdsHostname
+            RDS_PORT: !Ref RdsPort
+            RDS_USERNAME: !Ref RdsUsername
+            RDS_PASSWORD: !Ref RdsPassword
+            RDS_DB_NAME: !Ref RdsDbName
+            RDS_REGION: !Ref RdsRegion
+        Events:
+          GetCourseOfferingInfo:
+            Type: Api
+            Properties:
+              Path: /get-course-offering-info
+              Method: post
+              Auth:
+                ApiKeyRequired: true
+      
 
   # BELOW ARE EXAMPLE LAMBDA FUNCTIONS - DO NOT EDIT, ONLY USE AS REFERENCE!
   # Example Lambda 1 - HelloNameFunction
@@ -99,7 +127,7 @@ Resources:
       Runtime: python3.12
       Timeout: 10
       Events:
-        HelloName:
+        ByeName:
           Type: Api
           Properties:
             Path: /bye
